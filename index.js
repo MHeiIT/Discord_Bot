@@ -33,7 +33,7 @@ client.login(config.BOT_TOKEN);
 
 
 var fs=require('fs');
-var data=fs.readFileSync('C:\\Users\\admin\\Desktop\\Mika\\Java\\discord-bot\\data.json', 'utf8');
+var data=fs.readFileSync('C:\\Users\\admin\\Desktop\\Mika\\Java\\Discord_Bot\\data.json', 'utf8');
 var words=JSON.parse(data);
 
 function getData() {
