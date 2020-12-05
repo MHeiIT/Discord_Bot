@@ -50,6 +50,14 @@ function getData() {
     return text;
 }
 
-process.on('exit', function(code) {
-    return console.log(`About to exit with code ${code}`);
+const readline = require("readline");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.on("line", (input) => {
+    if (input == "exit") {
+        process.exit(22);
+    }
 });
