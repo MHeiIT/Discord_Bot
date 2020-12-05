@@ -34,11 +34,13 @@ client.login(config.BOT_TOKEN);
 
 
 
-var fs=require('fs');
-var data=fs.readFileSync('/var/lib/jenkins/mika/userdata.json', 'utf8');
-var words=JSON.parse(data);
+
 
 function getData() {
+    var fs=require('fs');
+    var data=fs.readFileSync('/var/lib/jenkins/mika/userdata.json', 'utf8');
+    var words=JSON.parse(data);
+    
     var text = words[0].name + ": " + words[0].points+"\n";
     if (words.length != 1) {
         for (var i = 1; i <= words.length-1; i++) {
