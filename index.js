@@ -41,12 +41,11 @@ function getData() {
     var data=fs.readFileSync('/var/lib/jenkins/mika/userdata.json', 'utf8');
     var words=JSON.parse(data);
 
-    var text = words[0].name + ": " + words[0].points+"\n";
-    if (words.length != 1) {
-        for (var i = 1; i <= words.length-1; i++) {
-            text = text + words[i].name + ": " + words[i].points+"\n";
-        }
-    }  
+    var text = "";
+    for (var i = 0; i <= words.length-1; i++) {
+        text = text + users[0].words[i].name + ": " + users[0].words[i].points+"\n";
+    }
+      
     return text;
 }
 
