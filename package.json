@@ -4,7 +4,7 @@
   "description": "discord bot show json data",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mika-node spec"
   },
   "author": "",
   "license": "ISC",
