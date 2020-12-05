@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const config = require("./config.json");
+const config = require("/var/lib/jenkins/mika/config.json");
 
 const client = new Discord.Client();
 const prefix = "!";
@@ -21,7 +21,9 @@ client.on("message", function(message) {
     if (command === "help"||command === "h") {
         message.channel.send("do \"!points\" to get points");
     } else if (command === "points") {
-        message.channel.send(getData());
+        if (message.channel.name === "challenge") {
+            message.channel.send(getData());
+        }
     }
 
 });   
@@ -33,7 +35,7 @@ client.login(config.BOT_TOKEN);
 
 
 var fs=require('fs');
-var data=fs.readFileSync('C:\\Users\\admin\\Desktop\\Mika\\Java\\Discord_Bot\\data.json', 'utf8');
+var data=fs.readFileSync('/var/lib/jenkins/mika/userdata.json', 'utf8');
 var words=JSON.parse(data);
 
 function getData() {
