@@ -42,8 +42,8 @@ function getData() {
     var words=JSON.parse(data);
 
     var text = "";
-    for (var i = 0; i <= words[0].users.length-1; i++) {
-        text = text + words[0].users[i].name + ": " + words[0].users[i].points+"\n";
+    for (var i = 0; i <= words.users.length-1; i++) {
+        text = text + words.users[i].name + ": " + words.users[i].points+"\n";
     }
       
     return text;
