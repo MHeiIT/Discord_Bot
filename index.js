@@ -29,7 +29,7 @@ client.on("message", function(message) {
         if (args[0] === "help"||args[0] === "h") {
             message.channel.send(
                 "Usage: \n "+
-                "!help                   //show this pannel \n "+
+                "!help                   //show this pannel \n"+
                 "!points or !points all  //show all points \n"+ 
                 "!points sort            //show all points sorted\n"+
                 "!points weekly          //show all points you got last week\n"+
