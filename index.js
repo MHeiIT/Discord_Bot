@@ -27,7 +27,14 @@ client.on("message", function(message) {
 
     if (message.channel.name === "challenge") {
         if (args[0] === "help"||args[0] === "h") {
-            message.channel.send("do \"!points\" to get points");
+            message.channel.send(
+                "Usage: \n "+
+                "!help                   //show this pannel \n "+
+                "!points or !points all  //show all points \n"+ 
+                "!points sort            //show all points sorted\n"+
+                "!points weekly          //show all points you got last week\n"+
+                "!points graph           //show graph of points(not yet implemented)"
+                );
         } else if (args[0] === "points") {
             if (args.length === 1|| args[1] === "all") {
                 message.channel.send(getData());
@@ -35,7 +42,7 @@ client.on("message", function(message) {
                 console.log("sorting");
                 message.channel.send(sort());
             } else if (args[1] === "weekly") {
-                message.channel.send(getWeeklyData());
+                message.channel.send("All points from next-to-last monday to last monday 00:00\n"+getWeeklyData());
             } else if (args[1] === "graph") {
                 message.channel.send("not implemented (yet)");
             }
