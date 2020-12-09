@@ -1,5 +1,12 @@
 const Discord = require("discord.js");
 const config = require("/var/lib/jenkins/mika/config.json");
+const userdata = '/var/lib/jenkins/mika/userdata.json';
+const userdataweekly = '/var/lib/jenkins/mika/userdataweekly.json';
+/*
+const config = require("./config.json");
+const userdata = 'C:\\Users\\admin\\Desktop\\Mika\\Java\\Discord_Bot\\data.json';
+const userdataweekly = 'C:\\Users\\admin\\Desktop\\Mika\\Java\\Discord_Bot\\dataweekly.json';*/
+
 
 const client = new Discord.Client();
 const prefix = "!";
@@ -16,16 +23,24 @@ client.on("message", function(message) {
 
     const commandBody = message.content.slice(prefix.length);
     const args = commandBody.split(' ');
-    const command = args.shift().toLowerCase();  
-    
-    if (command === "help"||command === "h") {
-        message.channel.send("do \"!points\" to get points");
-    } else if (command === "points") {
-        if (message.channel.name === "challenge") {
-            message.channel.send(getData());
-        }
-    }
+    console.log(args);
 
+    if (message.channel.name === "challenge") {
+        if (args[0] === "help"||args[0] === "h") {
+            message.channel.send("do \"!points\" to get points");
+        } else if (args[0] === "points") {
+            if (args.length === 1|| args[1] === "all") {
+                message.channel.send(getData());
+            } else if (args[1] === "sort") {
+                console.log("sorting");
+                message.channel.send(sort());
+            } else if (args[1] === "weekly") {
+                message.channel.send(getWeeklyData());
+            } else if (args[1] === "graph") {
+                message.channel.send("not implemented (yet)");
+            }
+        } 
+    }
 });   
 
 
@@ -38,7 +53,7 @@ client.login(config.BOT_TOKEN);
 
 function getData() {
     var fs=require('fs');
-    var data=fs.readFileSync('/var/lib/jenkins/mika/userdata.json', 'utf8');
+    var data=fs.readFileSync(userdata, 'utf8');
     var words=JSON.parse(data);
 
     var text = "";
@@ -48,6 +63,71 @@ function getData() {
       
     return text;
 }
+
+function sort() {
+    var arr = getData2();
+    var str = "";
+    var sortarr = arr.sort((c1, c2) => (c1.points < c2.points) ? 1 : (c1.points > c2.points) ? -1 : 0);
+
+
+    for (var i = 0; i <= sortarr.length-1; i++) {
+        str = str + sortarr[i].name + ": " + sortarr[i].points+"\n";
+    }
+
+
+    return str;
+}
+
+function getData2() {
+    var fs=require('fs');
+    var data=fs.readFileSync(userdata, 'utf8');
+    var words=JSON.parse(data);
+    var arr = [{
+        "name": words[0].users[0].name,
+        "points": words[0].users[0].points
+    }];
+    for (var i = 1; i <= words[0].users.length-1; i++) {
+        let ar = {
+            "name": words[0].users[i].name,
+            "points": words[0].users[i].points
+        };
+        arr.push(ar);
+    }
+      
+    return arr;
+}
+
+function getWeeklyData() {
+    var fs=require('fs');
+    var data=fs.readFileSync(userdataweekly, 'utf8');
+    var words=JSON.parse(data);
+
+    var arr = [{
+        "name": words[0].name,
+        "points": words[0].points
+    }];
+    for (var i = 1; i <= words.length-1; i++) {
+        let ar = {
+            "name": words[i].name,
+            "points": words[i].points
+        };
+        arr.push(ar);
+    }
+
+    var str = "";
+    var sortarr = arr.sort((c1, c2) => (c1.points < c2.points) ? 1 : (c1.points > c2.points) ? -1 : 0);
+
+
+    for (var i = 0; i <= sortarr.length-1; i++) {
+        str = str + sortarr[i].name + ": " + sortarr[i].points+"\n";
+    }
+      
+    return str;
+}
+
+
+
+
 
 const readline = require("readline");
 const rl = readline.createInterface({
