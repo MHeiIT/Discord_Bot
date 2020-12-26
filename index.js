@@ -2,10 +2,10 @@ const Discord = require("discord.js");
 const config = require("/var/lib/jenkins/mika/config.json");
 const userdata = '/var/lib/jenkins/mika/userdata.json';
 const userdataweekly = '/var/lib/jenkins/mika/userdataweekly.json';
-/*
-const config = require("./config.json");
-const userdata = 'C:\\Users\\admin\\Desktop\\Mika\\Java\\Discord_Bot\\data.json';
-const userdataweekly = 'C:\\Users\\admin\\Desktop\\Mika\\Java\\Discord_Bot\\dataweekly.json';*/
+const image ='/var/lib/jenkins/mika/img.png';
+const chart ='/var/lib/jenkins/mika/chart.png';
+
+
 
 
 const client = new Discord.Client();
@@ -19,7 +19,6 @@ client.on("ready", () => {
 client.on("message", function(message) { 
     if (message.author.bot) return;   
     if (!message.content.startsWith(prefix)) return; 
-    //console.log(`[${message.author.tag}]: ${message.content}`);
 
     const commandBody = message.content.slice(prefix.length);
     const args = commandBody.split(' ');
@@ -27,24 +26,16 @@ client.on("message", function(message) {
 
     if (message.channel.name === "challenge") {
         if (args[0] === "help"||args[0] === "h") {
-            message.channel.send(
-                "Usage: \n "+
-                "!help                   //show this pannel \n"+
-                "!points or !points all  //show all points \n"+ 
-                "!points sort            //show all points sorted\n"+
-                "!points weekly          //show all points you got last week\n"+
-                "!points graph           //show graph of points(not yet implemented)"
-                );
+            message.channel.send(helpEmbed);
         } else if (args[0] === "points") {
-            if (args.length === 1|| args[1] === "all") {
+            if (args.length === 1 || args[1] === "all") {
                 message.channel.send(getData());
             } else if (args[1] === "sort") {
-                console.log("sorting");
                 message.channel.send(sort());
             } else if (args[1] === "weekly") {
-                message.channel.send("All points from next-to-last monday to last monday 00:00\n"+getWeeklyData());
-            } else if (args[1] === "graph") {
-                message.channel.send("not implemented (yet)");
+                message.channel.send(getWeeklyData());
+            } else if (args[1] === "chart") {
+                message.channel.send(chartEmbed);
             }
         } 
     }
@@ -59,30 +50,48 @@ client.login(config.BOT_TOKEN);
 
 
 function getData() {
-    var fs=require('fs');
-    var data=fs.readFileSync(userdata, 'utf8');
-    var words=JSON.parse(data);
+    var arr = getData2();
 
-    var text = "";
-    for (var i = 0; i <= words[0].users.length-1; i++) {
-        text = text + words[0].users[i].name + ": " + words[0].users[i].points+"\n";
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Points sorted')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("All users and points sorted by points");
+    
+    for (var i = 0; i <= arr.length-1; i++) {
+        embed.addField(arr[i].name,arr[i].points,false);
     }
-      
-    return text;
+
+
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
+
+
+    return embed;
 }
 
 function sort() {
     var arr = getData2();
-    var str = "";
     var sortarr = arr.sort((c1, c2) => (c1.points < c2.points) ? 1 : (c1.points > c2.points) ? -1 : 0);
 
-
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Points sorted')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("All users and points sorted by points");
+    
     for (var i = 0; i <= sortarr.length-1; i++) {
-        str = str + sortarr[i].name + ": " + sortarr[i].points+"\n";
+        embed.addField(sortarr[i].name,sortarr[i].points,false);
     }
 
 
-    return str;
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
+
+
+    return embed;
 }
 
 function getData2() {
@@ -121,20 +130,38 @@ function getWeeklyData() {
         arr.push(ar);
     }
 
-    var str = "";
     var sortarr = arr.sort((c1, c2) => (c1.points < c2.points) ? 1 : (c1.points > c2.points) ? -1 : 0);
 
 
+    
+
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Weekly Data')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("All points from next-to-last monday to last monday 00:00");
+    
     for (var i = 0; i <= sortarr.length-1; i++) {
-        str = str + sortarr[i].name + ": " + sortarr[i].points+"\n";
+        embed.addField(sortarr[i].name,sortarr[i].points,false);
     }
-      
-    return str;
+
+
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
+
+
+    return embed;
 }
 
 
-
-
+const chartEmbed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Point history')
+    .attachFiles([chart])
+	.setImage('attachment://chart.png')
+	.setTimestamp()
+    .setFooter('by Mika');
 
 const readline = require("readline");
 const rl = readline.createInterface({
@@ -147,3 +174,19 @@ rl.on("line", (input) => {
         process.exit(22);
     }
 });
+
+
+const helpEmbed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('command list')
+    .attachFiles([image])
+	.setThumbnail('attachment://img.png')
+	.addFields(
+		{ name: '!help !h', value: 'show this pannel', inline: false },
+        { name: '!points !points all', value: 'show all points', inline: false },
+        { name: '!points sort', value: 'show all points sorted', inline: false },
+        { name: '!points weekly', value: 'show all points you got last week', inline: false },
+        { name: '!points chart', value: 'show chart of point history', inline: false },
+	)
+	.setTimestamp()
+    .setFooter('by Mika');
