@@ -35,7 +35,14 @@ client.on("message", function(message) {
             } else if (args[1] === "weekly") {
                 message.channel.send(getWeeklyData());
             } else if (args[1] === "chart") {
-                message.channel.send(chartEmbed);
+                
+                message.channel.send(getChartEmbed());
+            } else if (args[1] === "avg") {
+                if (args.length === 2) {
+                    message.channel.send(getAvgPointsEmbed());
+                } else if (args[2] === "sort") {
+                    message.channel.send(getAvgPointsSortedEmbed());
+                }
             }
         } 
     }
@@ -54,10 +61,10 @@ function getData() {
 
     const embed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
-    .setTitle('Points sorted')
+    .setTitle('All points')
     .attachFiles([image])
     .setThumbnail('attachment://img.png')
-    .setDescription("All users and points sorted by points");
+    .setDescription("All users and points");
     
     for (var i = 0; i <= arr.length-1; i++) {
         embed.addField(arr[i].name,arr[i].points,false);
@@ -154,14 +161,89 @@ function getWeeklyData() {
     return embed;
 }
 
-
-const chartEmbed = new Discord.MessageEmbed()
+function getChartEmbed() {
+    const chartEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
     .setTitle('Point history')
     .attachFiles([chart])
 	.setImage('attachment://chart.png')
 	.setTimestamp()
     .setFooter('by Mika');
+    return chartEmbed;
+}
+
+function getAvgData() {
+    var fs=require('fs');
+    var data=fs.readFileSync(userdata, 'utf8');
+    var words=JSON.parse(data);
+    var arr = [{
+        "name": words[0].users[0].name,
+        "points": words[0].users[0].points
+    }];
+    
+    for (var a = 0; a<words[0].users.length; a++) {
+        arr[a] = {
+            "name": words[0].users[a].name,
+            "points": words[0].users[a].points
+        };
+        for (var i = 1; i< words.length; i++) {
+            arr[a] = {
+                "name": arr[a].name,
+                "points": ((arr[a].points+words[i].users[a].points)/2)
+            };
+        }
+    }
+    return arr;
+}
+
+
+function getAvgPointsEmbed() {
+    var arr = getAvgData();
+
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Average points')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("Average points per day for all users");
+    
+    for (var i = 0; i <= arr.length-1; i++) {
+        embed.addField(arr[i].name,arr[i].points,false);
+    }
+
+
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
+
+
+    return embed;
+}
+
+function getAvgPointsSortedEmbed() {
+    var arr = getAvgData();
+    var sortarr = arr.sort((c1, c2) => (c1.points < c2.points) ? 1 : (c1.points > c2.points) ? -1 : 0);
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Average points sorted')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("Average points per day for all users sorted by points");
+    
+    for (var i = 0; i <= sortarr.length-1; i++) {
+        embed.addField(sortarr[i].name,sortarr[i].points,false);
+    }
+
+
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
+
+
+    return embed;
+}
+
+
+
+
 
 const readline = require("readline");
 const rl = readline.createInterface({
@@ -183,9 +265,11 @@ const helpEmbed = new Discord.MessageEmbed()
 	.setThumbnail('attachment://img.png')
 	.addFields(
 		{ name: '!help !h', value: 'show this pannel', inline: false },
-        { name: '!points !points all', value: 'show all points', inline: false },
+        { name: '!points/!points all', value: 'show all points', inline: false },
         { name: '!points sort', value: 'show all points sorted', inline: false },
         { name: '!points weekly', value: 'show all points you got last week', inline: false },
+        { name: '!points avg', value: 'show points per day', inline: false },
+        { name: '!points avg sort', value: 'show points per day sorted', inline: false },
         { name: '!points chart', value: 'show chart of point history', inline: false },
 	)
 	.setTimestamp()
