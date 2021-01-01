@@ -178,21 +178,17 @@ function getAvgData() {
     var words=JSON.parse(data);
     var arr = [{
         "name": words[0].users[0].name,
-        "points": words[0].users[0].points
+        "points": (Math.round(((words[0].users[0].points)/words.length)*100)/100)
     }];
-    
-    for (var a = 0; a<words[0].users.length; a++) {
-        arr[a] = {
-            "name": words[0].users[a].name,
-            "points": words[0].users[a].points
+
+    for (var i = 1; i < words[0].users.length; i++) {
+        let ar = {
+            "name": words[0].users[i].name,
+            "points": (Math.round(((words[0].users[i].points)/words.length)*100)/100)
         };
-        for (var i = 1; i< words.length; i++) {
-            arr[a] = {
-                "name": arr[a].name,
-                "points": ((arr[a].points+words[i].users[a].points)/2)
-            };
-        }
+        arr.push(ar);
     }
+      
     return arr;
 }
 
