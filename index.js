@@ -35,13 +35,18 @@ client.on("message", function(message) {
             } else if (args[1] === "weekly") {
                 message.channel.send(getWeeklyData());
             } else if (args[1] === "chart") {
-                
                 message.channel.send(getChartEmbed());
             } else if (args[1] === "avg") {
                 if (args.length === 2) {
                     message.channel.send(getAvgPointsEmbed());
                 } else if (args[2] === "sort") {
                     message.channel.send(getAvgPointsSortedEmbed());
+                }
+            } else if (args[1] === "est") {
+                if (args.length === 2) {
+                    message.channel.send(getEstPointsEmbed());
+                } else if (args[2] === "sort") {
+                    message.channel.send(getEstPointsSortedEmbed());
                 }
             }
         } 
@@ -237,9 +242,49 @@ function getAvgPointsSortedEmbed() {
     return embed;
 }
 
+function getEstPointsEmbed() {
+    var arr = getAvgData();
+
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Estimated points')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("Estimated points based on your average points");
+    
+    for (var i = 0; i <= arr.length-1; i++) {
+        embed.addField(arr[i].name,arr[i].points*365,false);
+    }
 
 
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
 
+
+    return embed;
+}
+
+function getEstPointsSortedEmbed() {
+    var arr = getAvgData();
+    var sortarr = arr.sort((c1, c2) => (c1.points < c2.points) ? 1 : (c1.points > c2.points) ? -1 : 0);
+    const embed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+    .setTitle('Estimated points sorted')
+    .attachFiles([image])
+    .setThumbnail('attachment://img.png')
+    .setDescription("Estimated points based on your average points sorted");
+    
+    for (var i = 0; i <= sortarr.length-1; i++) {
+        embed.addField(sortarr[i].name,sortarr[i].points*365,false);
+    }
+
+
+	embed.setTimestamp();
+    embed.setFooter('by Mika');
+
+
+    return embed;
+}
 
 const readline = require("readline");
 const rl = readline.createInterface({
@@ -266,6 +311,8 @@ const helpEmbed = new Discord.MessageEmbed()
         { name: '!points weekly', value: 'show all points you got last week', inline: false },
         { name: '!points avg', value: 'show points per day', inline: false },
         { name: '!points avg sort', value: 'show points per day sorted', inline: false },
+        { name: '!points est', value: 'show estimated points based on your average points', inline: false },
+        { name: '!points est sort', value: 'show estimated points based on your average points sorted', inline: false },
         { name: '!points chart', value: 'show chart of point history', inline: false },
 	)
 	.setTimestamp()
