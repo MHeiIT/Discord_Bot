@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const config = require("/var/lib/jenkins/mika/config.json");
 const userdata = '/var/lib/jenkins/mika/userdata.json';
-const userdataweekly = '/var/lib/jenkins/mika/userdataweekly.json';
 const image ='/var/lib/jenkins/mika/img.png';
 const chart ='/var/lib/jenkins/mika/chart.png';
 
@@ -127,17 +126,17 @@ function getData2() {
 
 function getWeeklyData() {
     var fs=require('fs');
-    var data=fs.readFileSync(userdataweekly, 'utf8');
+    var data=fs.readFileSync(userdata, 'utf8');
     var words=JSON.parse(data);
-
     var arr = [{
-        "name": words[0].name,
-        "points": words[0].points
+        "name": words[0].users[0].name,
+        "points": words[0].users[0].points-words[7].users[0].points
     }];
-    for (var i = 1; i <= words.length-1; i++) {
+
+    for (var i = 1; i <= words[0].users.length-1; i++) {
         let ar = {
-            "name": words[i].name,
-            "points": words[i].points
+            "name": words[0].users[i].name,
+            "points": words[0].users[i].points - words[7].users[i].points
         };
         arr.push(ar);
     }
@@ -152,7 +151,7 @@ function getWeeklyData() {
     .setTitle('Weekly Data')
     .attachFiles([image])
     .setThumbnail('attachment://img.png')
-    .setDescription("All points from next-to-last monday to last monday 00:00");
+    .setDescription("All points from the last 7 days");
     
     for (var i = 0; i <= sortarr.length-1; i++) {
         embed.addField(sortarr[i].name,sortarr[i].points,false);
@@ -308,7 +307,7 @@ const helpEmbed = new Discord.MessageEmbed()
 		{ name: '!help !h', value: 'show this pannel', inline: false },
         { name: '!points/!points all', value: 'show all points', inline: false },
         { name: '!points sort', value: 'show all points sorted', inline: false },
-        { name: '!points weekly', value: 'show all points you got last week', inline: false },
+        { name: '!points weekly', value: 'show all points you got in the last week', inline: false },
         { name: '!points avg', value: 'show points per day', inline: false },
         { name: '!points avg sort', value: 'show points per day sorted', inline: false },
         { name: '!points est', value: 'show estimated points based on your average points', inline: false },
